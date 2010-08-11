@@ -187,7 +187,7 @@ module AttrEncrypted
             end
             value = instance_variable_set("@#{attribute}", self.class.send("decrypt_#{attribute}".to_sym, encrypted_value)) if value.nil? && !encrypted_value.nil?
           ensure
-            options.merge!(original_options)
+            options.merge!(original_options) if original_options
           end
           value
         end
@@ -201,7 +201,7 @@ module AttrEncrypted
             end
             send("#{encrypted_attribute_name}=".to_sym, self.class.send("encrypt_#{attribute}".to_sym, value))
           ensure
-            options.merge!(original_options)
+            options.merge!(original_options) if original_options
           end
           instance_variable_set("@#{attribute}", value)
         end

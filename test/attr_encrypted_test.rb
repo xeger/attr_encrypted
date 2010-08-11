@@ -48,6 +48,15 @@ class SomeOtherClass
   end
 end
 
+class SomeBuggyClass
+  def raise_exception
+    raise Exception, "oh noes!"
+  end
+
+  self.attr_encrypted_options[:key] = :raise_exception 
+  attr_encrypted :buggy
+end
+
 class AttrEncryptedTest < Test::Unit::TestCase
   
   def test_should_store_email_in_encrypted_attributes
@@ -269,4 +278,13 @@ class AttrEncryptedTest < Test::Unit::TestCase
     assert_equal "not_encrypted_stuff", @user.encrypted_with_if_changed
   end
   
+  def test_should_not_mask_user_code_exceptions
+    @object = SomeBuggyClass.new
+
+    begin
+      @object.buggy = "hello world"
+    rescue Exception => e
+      assert_equal "oh noes!", e.message
+    end 
+  end
 end
